@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "161011906899",
+    "project_id": "mental-guru",
+    "storage_bucket": "mental-guru.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:161011906899:android:9266013ffd4824cdea09a6",
+        "android_client_info": {
+          "package_name": "com.example.mentalguru"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdc4GugHk8cSg5rFgMRMxNvlFXSc9jMt0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
