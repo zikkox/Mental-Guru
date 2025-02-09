@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mentalguru.R
-import com.example.mentalguru.presentation.Screen
+import com.example.mentalguru.presentation.navigation.Screen
 
 @Composable
 fun WelcomeScreen(navController: NavController) {

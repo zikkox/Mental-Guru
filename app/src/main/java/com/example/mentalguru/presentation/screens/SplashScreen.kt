@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mentalguru.R
-import com.example.mentalguru.presentation.Screen
+import com.example.mentalguru.presentation.navigation.Screen
 import kotlinx.coroutines.delay
 
 @Composable

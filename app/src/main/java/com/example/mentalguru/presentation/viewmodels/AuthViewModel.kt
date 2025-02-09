@@ -1,4 +1,4 @@
-package com.example.mentalguru.viewmodels
+package com.example.mentalguru.presentation.viewmodels
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf

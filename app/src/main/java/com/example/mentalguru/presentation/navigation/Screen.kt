@@ -1,4 +1,4 @@
-package com.example.mentalguru.presentation
+package com.example.mentalguru.presentation.navigation
 
 sealed class Screen(val route: String) {
     data object Splash : Screen("splash")

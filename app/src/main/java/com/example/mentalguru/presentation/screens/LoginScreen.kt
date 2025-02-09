@@ -9,9 +9,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -31,15 +30,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mentalguru.R
-import com.example.mentalguru.presentation.Screen
-import com.example.mentalguru.viewmodels.AuthViewModel
+import com.example.mentalguru.presentation.navigation.Screen
+import com.example.mentalguru.presentation.viewmodels.AuthViewModel
 
 @Composable
 fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewModel()) {
 
-    val loginEmail by viewModel.loginEmail
-    val loginPassword by viewModel.loginPassword
-    val loginState by viewModel.loginState
+    val loginEmail by viewModel.loginEmail.collectAsState()
+    val loginPassword by viewModel.loginPassword.collectAsState()
+    val loginState by viewModel.loginState.collectAsState()
 
     Box(
         modifier = Modifier.fillMaxSize()

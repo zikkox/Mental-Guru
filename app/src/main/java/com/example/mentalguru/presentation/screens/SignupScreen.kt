@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -26,17 +27,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mentalguru.R
-import com.example.mentalguru.presentation.Screen
-import com.example.mentalguru.presentation.navigation.NavGraph
-import com.example.mentalguru.viewmodels.AuthViewModel
+import com.example.mentalguru.presentation.navigation.Screen
+import com.example.mentalguru.presentation.viewmodels.AuthViewModel
 
 @Composable
 fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = viewModel()) {
 
-    val signupEmail by viewModel.signupEmail
-    val signupPassword by viewModel.signupPassword
-    val signupRepeatPassword by viewModel.signupRepeatPassword
-    val signupState by viewModel.signupState
+    val signupEmail by viewModel.signupEmail.collectAsState()
+    val signupPassword by viewModel.signupPassword.collectAsState()
+    val signupRepeatPassword by viewModel.signupRepeatPassword.collectAsState()
+    val signupState by viewModel.signupState.collectAsState()
 
 
     Box(
