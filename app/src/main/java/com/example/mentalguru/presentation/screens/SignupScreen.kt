@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -28,6 +29,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mentalguru.R
 import com.example.mentalguru.presentation.navigation.Screen
+import com.example.mentalguru.presentation.ui.components.SnackbarHostComponent
 import com.example.mentalguru.presentation.viewmodels.AuthViewModel
 
 @Composable
@@ -38,6 +40,7 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = viewMo
     val signupRepeatPassword by viewModel.signupRepeatPassword.collectAsState()
     val signupState by viewModel.signupState.collectAsState()
 
+    val snackbarHostState = remember { SnackbarHostState() }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -87,7 +90,7 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = viewMo
 
             Spacer(modifier = Modifier.height(55.dp))
 
-            //Email textfield
+            //Email text field
             CustomTextField(
                 value = signupEmail,
                 onValueChange = { viewModel.onSignupEmailChange(it) },
@@ -97,7 +100,7 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = viewMo
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            //Password textfield
+            //Password text field
             CustomTextField(
                 value = signupPassword,
                 onValueChange = { viewModel.onSignupPasswordChange(it) },
@@ -108,7 +111,7 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = viewMo
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            //Repeat Password textfield
+            //Repeat Password text field
             CustomTextField(
                 value = signupRepeatPassword,
                 onValueChange = { viewModel.onSignupRepeatPasswordChange(it) },
@@ -121,7 +124,10 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = viewMo
 
             //Signup button
             Button(
-                onClick = { viewModel.signup() },
+                onClick = {
+                    snackbarHostState.currentSnackbarData?.dismiss()
+                    viewModel.signup()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
@@ -140,13 +146,6 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = viewMo
                     )
                 )
             }
-            //Observe the signup state and navigate only on success
-            LaunchedEffect(signupState) {
-                if (signupState is AuthViewModel.SignupState.Success) {
-                    navController.navigate(Screen.Main.route)
-                }
-            }
-
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -178,7 +177,28 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = viewMo
                 )
             }
         }
+
+        SnackbarHostComponent(snackbarHostState)
     }
+
+    //Observe login state and navigate only on success
+    LaunchedEffect(signupState) {
+        when (signupState) {
+            is AuthViewModel.SignupState.Success -> {
+                navController.navigate(Screen.Main.route)
+            }
+
+            else -> {}
+        }
+    }
+
+    //Collect the SharedFlow and show Snackbar on error
+    LaunchedEffect(Unit) {
+        viewModel.errorMessage.collect { error ->
+            snackbarHostState.showSnackbar(error)
+        }
+    }
+
 }
 
 

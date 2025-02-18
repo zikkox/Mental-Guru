@@ -1,14 +1,12 @@
 package com.example.mentalguru.presentation.viewmodels
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -44,6 +42,12 @@ class AuthViewModel : ViewModel() {
     private val _signupState = MutableStateFlow<SignupState>(SignupState.Idle)
     val signupState: StateFlow<SignupState> = _signupState
 
+    //Snackbar message state
+    private val _errorMessage = MutableSharedFlow<String>()
+    val errorMessage = _errorMessage.asSharedFlow()
+
+    val currentUser = firebaseAuth.currentUser
+
 
     //Update email/password
     fun onLoginEmailChange(newEmail: String) {
@@ -72,7 +76,9 @@ class AuthViewModel : ViewModel() {
             if (_isLoading.value) return@launch
 
             if (loginEmail.value.isEmpty() || loginPassword.value.isEmpty()) {
-                _loginState.value = LoginState.Error("Email or password cannot be empty")
+                val error = "Email or password cannot be empty"
+                _loginState.value = LoginState.Error(error)
+                _errorMessage.emit(error)
                 return@launch
             }
 
@@ -85,8 +91,11 @@ class AuthViewModel : ViewModel() {
                     if (task.isSuccessful) {
                         _loginState.value = LoginState.Success
                     } else {
-                        _loginState.value =
-                            LoginState.Error(task.exception?.message ?: "Login failed")
+                        val error = "Login failed"
+                        _loginState.value = LoginState.Error(error)
+                        viewModelScope.launch {
+                            _errorMessage.emit(error)
+                        }
                     }
                 }
         }
@@ -99,12 +108,16 @@ class AuthViewModel : ViewModel() {
             if (_isLoading.value) return@launch
 
             if (signupEmail.value.isEmpty() || signupPassword.value.isEmpty()) {
-                _signupState.value = SignupState.Error("Email or password cannot be empty")
+                val error = "Email or password cannot be empty"
+                _errorMessage.emit(error)
+                _signupState.value = SignupState.Error(error)
                 return@launch
             }
 
             if (signupPassword.value != signupRepeatPassword.value) {
-                _signupState.value = SignupState.Error("Passwords do not match")
+                val error = "Passwords do not match"
+                _errorMessage.emit(error)
+                _signupState.value = SignupState.Error(error)
                 return@launch
             }
 
@@ -117,11 +130,19 @@ class AuthViewModel : ViewModel() {
                     if (task.isSuccessful) {
                         _signupState.value = SignupState.Success
                     } else {
-                        _signupState.value =
-                            SignupState.Error(task.exception?.message ?: "Signup failed")
+                        val error = "Signup failed"
+                        _signupState.value = SignupState.Error(error)
+                        viewModelScope.launch {
+                            _errorMessage.emit(error)
+                        }
                     }
                 }
         }
+    }
+
+    //Logout
+    fun logout() {
+        firebaseAuth.signOut()
     }
 
 

@@ -1,16 +1,33 @@
 package com.example.mentalguru.presentation.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -31,7 +48,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mentalguru.R
 import com.example.mentalguru.presentation.navigation.Screen
+import com.example.mentalguru.presentation.ui.components.SnackbarHostComponent
 import com.example.mentalguru.presentation.viewmodels.AuthViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewModel()) {
@@ -39,6 +58,8 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
     val loginEmail by viewModel.loginEmail.collectAsState()
     val loginPassword by viewModel.loginPassword.collectAsState()
     val loginState by viewModel.loginState.collectAsState()
+
+    val snackbarHostState = remember { SnackbarHostState() }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -52,7 +73,7 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
 
         Column(modifier = Modifier.padding(top = 100.dp, start = 35.dp, end = 35.dp)) {
 
-            // Logo
+            //Logo
             Image(
                 painter = painterResource(id = R.drawable.ic_logo),
                 contentDescription = "Logo",
@@ -63,9 +84,9 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
 
             Spacer(modifier = Modifier.height(31.dp))
 
-            // Sign in text
+            //Sign in text
             Text(
-                text = AnnotatedString("Sign In"),
+                text = "Sign In",
                 style = androidx.compose.ui.text.TextStyle(
                     color = Color.White,
                     fontSize = 30.sp,
@@ -77,7 +98,7 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
             Spacer(modifier = Modifier.height(5.dp))
 
             Text(
-                text = AnnotatedString("Sign in now to access your exercises and saved music."),
+                text = "Sign in now to access your exercises and saved music.",
                 style = androidx.compose.ui.text.TextStyle(
                     color = Color.LightGray,
                     fontSize = 16.sp,
@@ -88,7 +109,7 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
 
             Spacer(modifier = Modifier.height(55.dp))
 
-            // Email text field
+            //Email text field
             CustomTextField(
                 value = loginEmail,
                 onValueChange = { viewModel.onLoginEmailChange(it) },
@@ -98,7 +119,7 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            // Password text field
+            //Password text field
             CustomTextField(
                 value = loginPassword,
                 onValueChange = { viewModel.onLoginPasswordChange(it) },
@@ -109,7 +130,7 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
 
             Spacer(modifier = Modifier.height(9.dp))
 
-            // Forgot Password text
+            //Forgot password text
             ClickableText(
                 text = AnnotatedString("Forgot Password?"),
                 style = androidx.compose.ui.text.TextStyle(
@@ -126,7 +147,10 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
 
             //Login button
             Button(
-                onClick = { viewModel.login() },
+                onClick = {
+                    snackbarHostState.currentSnackbarData?.dismiss()
+                    viewModel.login()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
@@ -145,13 +169,6 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
                     )
                 )
             }
-            //Observe the login state and navigate only on success
-            LaunchedEffect(loginState) {
-                if (loginState is AuthViewModel.LoginState.Success) {
-                    navController.navigate(Screen.Main.route)
-                }
-            }
-
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -161,7 +178,7 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
                 .clickable { navController.navigate(Screen.Signup.route) }
             ) {
                 Text(
-                    text = AnnotatedString("Don't have an account?"),
+                    text = "Don't have an account?",
                     style = androidx.compose.ui.text.TextStyle(
                         color = Color.White,
                         fontSize = 20.sp,
@@ -173,7 +190,7 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
                 Spacer(modifier = Modifier.width(4.dp))
 
                 Text(
-                    text = AnnotatedString("Sign Up"),
+                    text = "Sign Up",
                     style = androidx.compose.ui.text.TextStyle(
                         color = Color.White,
                         fontSize = 20.sp,
@@ -183,8 +200,30 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
                 )
             }
         }
+
+        SnackbarHostComponent(snackbarHostState)
+    }
+
+
+    //Observe login state and navigate only on success
+    LaunchedEffect(loginState) {
+        when (loginState) {
+            is AuthViewModel.LoginState.Success -> {
+                navController.navigate(Screen.Main.route)
+            }
+
+            else -> {}
+        }
+    }
+
+    //Collect the SharedFlow and show Snackbar on error
+    LaunchedEffect(Unit) {
+        viewModel.errorMessage.collect { error ->
+            snackbarHostState.showSnackbar(error)
+        }
     }
 }
+
 
 @Composable
 fun CustomTextField(
@@ -218,6 +257,7 @@ fun CustomTextField(
         )
     )
 }
+
 
 @Preview
 @Composable
