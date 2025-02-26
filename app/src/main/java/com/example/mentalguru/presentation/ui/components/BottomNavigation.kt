@@ -32,8 +32,8 @@ val navigationItems = listOf(
     NavigationItem(
         title = "Main",
         icon = R.drawable.ic_main,
-        unselectedSize = 60,
-        selectedSize = 90,
+        unselectedSize = 30,
+        selectedSize = 45,
         route = Screen.Main.route
     ),
     NavigationItem(

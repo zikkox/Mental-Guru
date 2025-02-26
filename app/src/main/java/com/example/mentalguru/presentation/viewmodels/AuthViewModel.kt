@@ -82,6 +82,7 @@ class AuthViewModel : ViewModel() {
                 return@launch
             }
 
+            _loginState.value = LoginState.Loading
             _isLoading.value = true
 
             firebaseAuth.signInWithEmailAndPassword(loginEmail.value, loginPassword.value)
@@ -121,6 +122,7 @@ class AuthViewModel : ViewModel() {
                 return@launch
             }
 
+            _signupState.value = SignupState.Loading
             _isLoading.value = true
 
             firebaseAuth.createUserWithEmailAndPassword(signupEmail.value, signupPassword.value)

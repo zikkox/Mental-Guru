@@ -29,6 +29,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mentalguru.R
 import com.example.mentalguru.presentation.navigation.Screen
+import com.example.mentalguru.presentation.ui.components.LoadingComponent
 import com.example.mentalguru.presentation.ui.components.SnackbarHostComponent
 import com.example.mentalguru.presentation.viewmodels.AuthViewModel
 
@@ -177,6 +178,8 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel = viewMo
                 )
             }
         }
+
+        LoadingComponent(isLoading = signupState is AuthViewModel.SignupState.Loading)
 
         SnackbarHostComponent(snackbarHostState)
     }

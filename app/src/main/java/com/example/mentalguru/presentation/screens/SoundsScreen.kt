@@ -12,10 +12,14 @@ import com.example.mentalguru.presentation.ui.components.BottomNavigation
 
 //sounds screen ui goes here
 @Composable
-fun SoundsScreen(navController: NavController){
+fun SoundsScreen(navController: NavController) {
 
-    Box(modifier = Modifier.fillMaxSize()
-        .background(colorResource(id = R.color.dark_green))) {
-        BottomNavigation(navController)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colorResource(id = R.color.dark_green))
+    ) {
+
     }
+    BottomNavigation(navController)
 }
