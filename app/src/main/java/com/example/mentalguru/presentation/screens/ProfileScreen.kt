@@ -28,7 +28,7 @@ import com.example.mentalguru.presentation.ui.components.BottomNavigation
 import com.example.mentalguru.presentation.ui.components.TopBar
 
 @Composable
-fun ProfileScreen(navController: NavController, currentUserEmail: String? = null) {
+fun ProfileScreen(navController: NavController) {
 
 
 
@@ -40,7 +40,6 @@ fun ProfileScreen(navController: NavController, currentUserEmail: String? = null
 @Composable
 fun ProfileScreenPreview() {
     ProfileScreen(
-        navController = rememberNavController(),
-        currentUserEmail = "afreen.khan@email.com"
+        navController = rememberNavController()
     )
 }

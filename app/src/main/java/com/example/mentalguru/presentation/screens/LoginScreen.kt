@@ -1,6 +1,7 @@
 package com.example.mentalguru.presentation.screens
 
 import android.annotation.SuppressLint
+import android.app.Application
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -32,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -51,10 +53,15 @@ import com.example.mentalguru.presentation.navigation.Screen
 import com.example.mentalguru.presentation.ui.components.LoadingComponent
 import com.example.mentalguru.presentation.ui.components.SnackbarHostComponent
 import com.example.mentalguru.presentation.viewmodels.AuthViewModel
-import kotlinx.coroutines.delay
+import com.example.mentalguru.presentation.viewmodels.AuthViewModelFactory
 
 @Composable
-fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewModel()) {
+fun LoginScreen(navController: NavController) {
+
+    val application = LocalContext.current.applicationContext as Application
+    val viewModel: AuthViewModel = viewModel(
+        factory = AuthViewModelFactory(application = application)
+    )
 
     val loginEmail by viewModel.loginEmail.collectAsState()
     val loginPassword by viewModel.loginPassword.collectAsState()
@@ -150,7 +157,7 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel = viewMod
             Button(
                 onClick = {
                     snackbarHostState.currentSnackbarData?.dismiss()
-                    viewModel.login()
+                    viewModel.login(loginEmail, loginPassword)
                 },
                 modifier = Modifier
                     .fillMaxWidth()

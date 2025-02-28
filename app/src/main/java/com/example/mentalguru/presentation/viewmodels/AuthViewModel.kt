@@ -1,7 +1,11 @@
 package com.example.mentalguru.presentation.viewmodels
 
+import android.app.Application
+import android.content.Context
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mentalguru.data.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,10 +13,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
-class AuthViewModel : ViewModel() {
+class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
+    val authRepository = AuthRepository(application.applicationContext)
     private val firebaseAuth = FirebaseAuth.getInstance()
+
+    private val _isLoggedIn = MutableStateFlow(false)
+    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
 
     //Loading state (checks if user is already logged in)
     private val _isLoading = MutableStateFlow(false)
@@ -49,6 +58,15 @@ class AuthViewModel : ViewModel() {
     val currentUser = firebaseAuth.currentUser
 
 
+    init {
+        //Check if user is logged in when ViewModel is created
+        if (authRepository.isUserLoggedIn()) {
+            _isLoggedIn.value = true
+            _loginEmail.value = authRepository.getStoredEmail() ?: ""
+        }
+    }
+
+
     //Update email/password
     fun onLoginEmailChange(newEmail: String) {
         _loginEmail.value = newEmail
@@ -71,7 +89,7 @@ class AuthViewModel : ViewModel() {
     }
 
     //Login
-    fun login() {
+    fun login(email: String, password: String) {
         viewModelScope.launch {
             if (_isLoading.value) return@launch
 
@@ -85,22 +103,22 @@ class AuthViewModel : ViewModel() {
             _loginState.value = LoginState.Loading
             _isLoading.value = true
 
-            firebaseAuth.signInWithEmailAndPassword(loginEmail.value, loginPassword.value)
-                .addOnCompleteListener { task ->
-                    _isLoading.value = false
+            try {
+                firebaseAuth.signInWithEmailAndPassword(loginEmail.value, loginPassword.value).await()
 
-                    if (task.isSuccessful) {
-                        _loginState.value = LoginState.Success
-                    } else {
-                        val error = "Login failed"
-                        _loginState.value = LoginState.Error(error)
-                        viewModelScope.launch {
-                            _errorMessage.emit(error)
-                        }
-                    }
-                }
+                _isLoading.value = false
+                _loginState.value = LoginState.Success
+                authRepository.saveEmail(email)
+                authRepository.saveLoginState(true)
+            } catch (e: Exception) {
+                _isLoading.value = false
+                val error = "Login failed: ${e.message}"
+                _loginState.value = LoginState.Error(error)
+                _errorMessage.emit(error)
+            }
         }
     }
+
 
 
     //Signup
@@ -125,42 +143,43 @@ class AuthViewModel : ViewModel() {
             _signupState.value = SignupState.Loading
             _isLoading.value = true
 
-            firebaseAuth.createUserWithEmailAndPassword(signupEmail.value, signupPassword.value)
-                .addOnCompleteListener { task ->
-                    _isLoading.value = false
+            try {
+                firebaseAuth.createUserWithEmailAndPassword(signupEmail.value, signupPassword.value).await()
 
-                    if (task.isSuccessful) {
-                        _signupState.value = SignupState.Success
-                    } else {
-                        val error = "Signup failed"
-                        _signupState.value = SignupState.Error(error)
-                        viewModelScope.launch {
-                            _errorMessage.emit(error)
-                        }
-                    }
-                }
+                _isLoading.value = false
+                _signupState.value = SignupState.Success
+                authRepository.saveLoginState(true) // Save login state
+            } catch (e: Exception) {
+                _isLoading.value = false
+                val error = "Signup failed: ${e.message}"
+                _signupState.value = SignupState.Error(error)
+                _errorMessage.emit(error)
+            }
         }
     }
+
 
     //Logout
     fun logout() {
         firebaseAuth.signOut()
+        _isLoggedIn.value = false
+        authRepository.clearUserData()
     }
 
 
     //Login state
     sealed class LoginState {
-        object Idle : LoginState()
-        object Loading : LoginState()
-        object Success : LoginState()
+        data object Idle : LoginState()
+        data object Loading : LoginState()
+        data object Success : LoginState()
         data class Error(val message: String) : LoginState()
     }
 
-    // Signup state
+    //Signup state
     sealed class SignupState {
-        object Idle : SignupState()
-        object Loading : SignupState()
-        object Success : SignupState()
+        data object Idle : SignupState()
+        data object Loading : SignupState()
+        data object Success : SignupState()
         data class Error(val message: String) : SignupState()
     }
 }
