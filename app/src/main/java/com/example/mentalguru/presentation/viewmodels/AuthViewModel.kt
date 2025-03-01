@@ -1,9 +1,7 @@
 package com.example.mentalguru.presentation.viewmodels
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mentalguru.data.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -89,7 +87,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     //Login
-    fun login(email: String, password: String) {
+    fun login() {
         viewModelScope.launch {
             if (_isLoading.value) return@launch
 
@@ -108,7 +106,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
                 _isLoading.value = false
                 _loginState.value = LoginState.Success
-                authRepository.saveEmail(email)
+                authRepository.saveEmail(loginEmail.value)
                 authRepository.saveLoginState(true)
             } catch (e: Exception) {
                 _isLoading.value = false

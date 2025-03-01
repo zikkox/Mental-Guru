@@ -1,6 +1,5 @@
 package com.example.mentalguru.presentation.screens
 
-import android.annotation.SuppressLint
 import android.app.Application
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -19,7 +18,6 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -157,7 +155,7 @@ fun LoginScreen(navController: NavController) {
             Button(
                 onClick = {
                     snackbarHostState.currentSnackbarData?.dismiss()
-                    viewModel.login(loginEmail, loginPassword)
+                    viewModel.login()
                 },
                 modifier = Modifier
                     .fillMaxWidth()

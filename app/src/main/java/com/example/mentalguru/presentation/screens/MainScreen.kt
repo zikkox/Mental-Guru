@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -27,7 +29,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
@@ -41,6 +42,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mentalguru.R
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.mentalguru.presentation.navigation.Screen
 import com.example.mentalguru.presentation.ui.components.BottomNavigation
 import com.example.mentalguru.presentation.ui.components.TopBar
 import com.example.mentalguru.presentation.viewmodels.AuthViewModel
@@ -63,12 +65,21 @@ fun MainScreen(navController: NavController) {
             "Meditation 101",
             "Techniques, Benefits, and a Beginner’s How-To",
             R.drawable.ic_lesson_one,
-            "https://www.gaiam.com/blogs/discover/meditation-101-techniques-benefits-and-a-beginner-s-how-to"
+            "https://www.gaiam.com/blogs/discover/meditation-101-techniques-benefits-and-a-beginner-s-how-to",
+            true
         ), MeditationItem(
             "Cardio Meditation",
             "Basics of Yoga for Beginners or Experienced Professionals",
             R.drawable.ic_lesson_two,
-            "https://www.ozofsalt.com/cardio-meditation-helping-become-mindful/"
+            "https://www.ozofsalt.com/cardio-meditation-helping-become-mindful/",
+            true
+        ),
+        MeditationItem(
+            "Timer Meditation",
+            "Time waits for no one! Use it while you can!",
+            R.drawable.ic_lesson_three,
+            "",
+            false
         )
     )
 
@@ -117,10 +128,17 @@ fun MainScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(25.dp))
 
             //Meditation cards
-            meditationList.forEach { item ->
-                MeditationCard(item)
-                Spacer(modifier = Modifier.height(26.dp))
+            LazyColumn(
+                modifier = Modifier
+                    .height(450.dp)
+                    .clip(RoundedCornerShape(20.dp)),
+                verticalArrangement = Arrangement.spacedBy(26.dp)
+            ) {
+                items(meditationList) { item ->
+                    MeditationCard(item, navController)
+                }
             }
+
         }
     }
 
@@ -146,7 +164,7 @@ fun MoodButton(mood: Mood) {
 }
 
 @Composable
-fun MeditationCard(item: MeditationItem) {
+fun MeditationCard(item: MeditationItem, navController: NavController) {
     val context = LocalContext.current
 
     Card(
@@ -198,27 +216,52 @@ fun MeditationCard(item: MeditationItem) {
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    Button(
-                        onClick = {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.webURL))
-                            context.startActivity(intent)
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.dark_green)
-                        ),
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        Text(text = "watch now", color = Color.White)
 
-                        Spacer(modifier = Modifier.width(8.dp))
+                    if(item.redirectsToWeb) {
+                        Button(
+                            onClick = {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.webURL))
+                                context.startActivity(intent)
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(id = R.color.dark_green)
+                            ),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Text(text = "watch now", color = Color.White)
 
-                        Icon(
-                            painter = painterResource(R.drawable.ic_watch),
-                            contentDescription = "Play",
-                            tint = Color.White,
-                            modifier = Modifier
-                                .size(13.dp)
-                        )
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            Icon(
+                                painter = painterResource(R.drawable.ic_watch),
+                                contentDescription = "Play",
+                                tint = Color.White,
+                                modifier = Modifier
+                                    .size(13.dp)
+                            )
+                        }
+                    }else{
+                        Button(
+                            onClick = {
+                                navController.navigate(Screen.Timer.route)
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(id = R.color.dark_green)
+                            ),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Text(text = "start your timer", color = Color.White)
+
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            Icon(
+                                painter = painterResource(R.drawable.ic_clock),
+                                contentDescription = "Play",
+                                tint = Color.White,
+                                modifier = Modifier
+                                    .size(13.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -229,7 +272,11 @@ fun MeditationCard(item: MeditationItem) {
 
 data class Mood(val name: String, val icon: Int)
 data class MeditationItem(
-    val title: String, val description: String, val imageRes: Int, val webURL: String
+    val title: String,
+    val description: String,
+    val imageRes: Int,
+    val webURL: String,
+    val redirectsToWeb: Boolean
 )
 
 

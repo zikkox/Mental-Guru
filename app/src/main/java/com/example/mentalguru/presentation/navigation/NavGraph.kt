@@ -10,6 +10,7 @@ import com.example.mentalguru.presentation.screens.MainScreen
 import com.example.mentalguru.presentation.screens.ProfileScreen
 import com.example.mentalguru.presentation.screens.SignUpScreen
 import com.example.mentalguru.presentation.screens.SoundsScreen
+import com.example.mentalguru.presentation.screens.TimerScreen
 import com.example.mentalguru.presentation.screens.WelcomeScreen
 
 @Composable
@@ -26,5 +27,6 @@ fun NavGraph() {
         composable("main") { MainScreen(navController) }
         composable("sounds") { SoundsScreen(navController) }
         composable("profile") { ProfileScreen(navController) }
+        composable("timer") { TimerScreen(navController) }
     }
 }
