@@ -56,9 +56,7 @@ fun ProfileScreen(navController: NavController) {
     ) {
 
         //Top bar
-        TopBar(currentUser?.email?.get(0) ?: 'p', navController)
-
-        Spacer(modifier = Modifier.height(30.dp))
+        TopBar(currentUser?.email?.get(0)?.uppercaseChar() ?: 'p', navController)
 
         Column(
             modifier = Modifier

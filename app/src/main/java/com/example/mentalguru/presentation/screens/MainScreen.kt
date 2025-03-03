@@ -62,6 +62,13 @@ fun MainScreen(navController: NavController) {
 
     val meditationList = listOf(
         MeditationItem(
+            "Timer Meditation",
+            "Time waits for no one! Use it while you can!",
+            R.drawable.ic_lesson_three,
+            "",
+            false
+        ),
+        MeditationItem(
             "Meditation 101",
             "Techniques, Benefits, and a Beginner’s How-To",
             R.drawable.ic_lesson_one,
@@ -73,13 +80,6 @@ fun MainScreen(navController: NavController) {
             R.drawable.ic_lesson_two,
             "https://www.ozofsalt.com/cardio-meditation-helping-become-mindful/",
             true
-        ),
-        MeditationItem(
-            "Timer Meditation",
-            "Time waits for no one! Use it while you can!",
-            R.drawable.ic_lesson_three,
-            "",
-            false
         )
     )
 
@@ -87,7 +87,7 @@ fun MainScreen(navController: NavController) {
         modifier = Modifier
             .fillMaxSize()
             .background(colorResource(id = R.color.dark_green))
-            .padding(16.dp)
+            .padding(24.dp)
     ) {
 
         //Top bar
@@ -130,7 +130,7 @@ fun MainScreen(navController: NavController) {
             //Meditation cards
             LazyColumn(
                 modifier = Modifier
-                    .height(450.dp)
+                    .height(425.dp)
                     .clip(RoundedCornerShape(20.dp)),
                 verticalArrangement = Arrangement.spacedBy(26.dp)
             ) {
@@ -217,51 +217,37 @@ fun MeditationCard(item: MeditationItem, navController: NavController) {
                     Spacer(modifier = Modifier.height(8.dp))
 
 
-                    if(item.redirectsToWeb) {
-                        Button(
-                            onClick = {
+                    Button(
+                        onClick = {
+                            if (item.redirectsToWeb) {
                                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.webURL))
                                 context.startActivity(intent)
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = colorResource(id = R.color.dark_green)
-                            ),
-                            shape = RoundedCornerShape(10.dp)
-                        ) {
-                            Text(text = "watch now", color = Color.White)
-
-                            Spacer(modifier = Modifier.width(8.dp))
-
-                            Icon(
-                                painter = painterResource(R.drawable.ic_watch),
-                                contentDescription = "Play",
-                                tint = Color.White,
-                                modifier = Modifier
-                                    .size(13.dp)
-                            )
-                        }
-                    }else{
-                        Button(
-                            onClick = {
+                            } else {
                                 navController.navigate(Screen.Timer.route)
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = colorResource(id = R.color.dark_green)
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.dark_green)
+                        ),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Text(
+                            text = if (item.redirectsToWeb) "watch now" else "start your timer",
+                            color = Color.White
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Icon(
+                            painter = if (item.redirectsToWeb) painterResource(R.drawable.ic_watch) else painterResource(
+                                R.drawable.ic_clock
                             ),
-                            shape = RoundedCornerShape(10.dp)
-                        ) {
-                            Text(text = "start your timer", color = Color.White)
+                            contentDescription = "Play",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .size(13.dp)
+                        )
 
-                            Spacer(modifier = Modifier.width(8.dp))
-
-                            Icon(
-                                painter = painterResource(R.drawable.ic_clock),
-                                contentDescription = "Play",
-                                tint = Color.White,
-                                modifier = Modifier
-                                    .size(13.dp)
-                            )
-                        }
                     }
                 }
             }
