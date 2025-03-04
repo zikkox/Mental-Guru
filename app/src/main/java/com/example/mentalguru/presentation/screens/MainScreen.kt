@@ -52,6 +52,8 @@ fun MainScreen(navController: NavController) {
 
     val viewModel: AuthViewModel = viewModel()
     val currentUser = viewModel.currentUser
+    val name = currentUser?.email?.substringBefore("@") ?: "Guest"
+    val initial = currentUser?.email?.get(0) ?: 'p'
 
     val moodList = listOf(
         Mood("Calm", R.drawable.ic_calm),
@@ -87,11 +89,11 @@ fun MainScreen(navController: NavController) {
         modifier = Modifier
             .fillMaxSize()
             .background(colorResource(id = R.color.dark_green))
-            .padding(24.dp)
+            .padding(16.dp)
     ) {
 
         //Top bar
-        TopBar(currentUser?.email?.get(0) ?: 'p', navController)
+        TopBar(initial, navController)
 
         Spacer(modifier = Modifier.height(31.dp))
 
@@ -99,7 +101,7 @@ fun MainScreen(navController: NavController) {
 
             //Greeting Text
             Text(
-                text = "Welcome back, ${currentUser?.email?.substringBefore("@") ?: "Guest"}!",
+                text = "Welcome back, ${name}!",
                 color = Color.White,
                 fontSize = 30.sp,
                 fontWeight = FontWeight.W400,

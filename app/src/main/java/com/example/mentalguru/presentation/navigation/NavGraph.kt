@@ -9,7 +9,7 @@ import com.example.mentalguru.presentation.screens.LoginScreen
 import com.example.mentalguru.presentation.screens.MainScreen
 import com.example.mentalguru.presentation.screens.ProfileScreen
 import com.example.mentalguru.presentation.screens.SignUpScreen
-import com.example.mentalguru.presentation.screens.SoundsScreen
+import com.example.mentalguru.presentation.screens.MusicScreen
 import com.example.mentalguru.presentation.screens.TimerScreen
 import com.example.mentalguru.presentation.screens.WelcomeScreen
 
@@ -25,7 +25,7 @@ fun NavGraph() {
         composable("login") { LoginScreen(navController) }
         composable("signup") { SignUpScreen(navController) }
         composable("main") { MainScreen(navController) }
-        composable("sounds") { SoundsScreen(navController) }
+        composable("music") { MusicScreen(navController) }
         composable("profile") { ProfileScreen(navController) }
         composable("timer") { TimerScreen(navController) }
     }

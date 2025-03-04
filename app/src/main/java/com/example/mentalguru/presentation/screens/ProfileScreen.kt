@@ -1,27 +1,17 @@
 package com.example.mentalguru.presentation.screens
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,8 +36,14 @@ import com.example.mentalguru.presentation.viewmodels.AuthViewModel
 @Composable
 fun ProfileScreen(navController: NavController) {
 
+
     val viewModel: AuthViewModel = viewModel()
     val currentUser = viewModel.currentUser
+    val initial = currentUser?.email?.get(0) ?: 'p'
+
+//    val userName by viewModel.userName.collectAsState()
+//    val userLocation by viewModel.userLocation.collectAsState()
+//    val userDob by viewModel.userDob.collectAsState()
 
     Box(
         modifier = Modifier
@@ -55,15 +52,14 @@ fun ProfileScreen(navController: NavController) {
             .padding(16.dp)
     ) {
 
-        //Top bar
-        TopBar(currentUser?.email?.get(0)?.uppercaseChar() ?: 'p', navController)
+        TopBar(initial, navController)
 
         Column(
             modifier = Modifier
                 .align(Alignment.TopCenter),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(150.dp))
+            Spacer(modifier = Modifier.height(145.dp))
 
             //Profile picture
             Box(
@@ -81,42 +77,70 @@ fun ProfileScreen(navController: NavController) {
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
+            //Username
             Text(
-                text = "Afreen Khan",
-                color = Color.White,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
+                text = AnnotatedString(currentUser?.email?.substringBefore("@") ?: "Guest"),
+                style = androidx.compose.ui.text.TextStyle(
+                    color = Color.White,
+                    fontSize = 35.sp,
+                    fontWeight = FontWeight.W400,
+                    letterSpacing = 1.2.sp
+                )
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(5.dp))
 
+            //Location
             Text(
-                text = "Lucknow, India",
-                color = Color.LightGray,
-                fontSize = 16.sp
+                text = AnnotatedString("India"),
+                style = androidx.compose.ui.text.TextStyle(
+                    color = Color.LightGray,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center
+                )
             )
-        }
 
-        TextButton(
-            onClick = { /* Edit Profile */ },
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(16.dp)
-        ) {
-            Text("Edit", color = Color.White)
+            Spacer(modifier = Modifier.height(5.dp))
+
+            //DoB
+            Text(
+                text = AnnotatedString("1992"),
+                style = androidx.compose.ui.text.TextStyle(
+                    color = Color.LightGray,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center
+                )
+            )
+
+            Spacer(modifier = Modifier.height(19.dp))
+
+            //Mottos
+            Image(
+                painter = painterResource(id = R.drawable.bg_motto_one),
+                contentDescription = "Motto 1",
+                modifier = Modifier
+                    .width(308.dp)
+                    .height(142.dp),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.height(19.dp))
+
+            Image(
+                painter = painterResource(id = R.drawable.bg_motto_two),
+                contentDescription = "Motto 2",
+                modifier = Modifier
+                    .width(308.dp)
+                    .height(142.dp),
+                contentScale = ContentScale.Crop
+            )
+
         }
     }
 
     BottomNavigation(navController)
-}
-
-
-@Preview
-@Composable
-fun ProfileScreenPreview() {
-    ProfileScreen(
-        navController = rememberNavController()
-    )
 }

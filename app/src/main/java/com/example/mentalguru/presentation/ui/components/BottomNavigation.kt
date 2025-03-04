@@ -41,7 +41,7 @@ val navigationItems = listOf(
         icon = R.drawable.ic_sounds,
         unselectedSize = 24,
         selectedSize = 36,
-        route = Screen.Sounds.route
+        route = Screen.Music.route
     ),
     NavigationItem(
         title = "Cart",

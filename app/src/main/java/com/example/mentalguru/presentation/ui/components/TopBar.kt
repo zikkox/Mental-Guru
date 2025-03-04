@@ -33,6 +33,7 @@ import com.example.mentalguru.presentation.viewmodels.AuthViewModel
 
 @Composable
 fun TopBar(initial: Char, navController: NavController) {
+
     val viewModel: AuthViewModel = viewModel()
 
     // Get current destination
@@ -44,14 +45,13 @@ fun TopBar(initial: Char, navController: NavController) {
             .padding(top = 60.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // Determine the icon based on the current screen
+        //Determine the icon based on the current screen
         val iconRes =
             if (currentDestination == "timer") R.drawable.ic_back_arrow else R.drawable.ic_logout
         val description = if (currentDestination == "timer") "Back" else "Logout"
 
-        // Icon (Logo or Logout)
-        Image(
-            painter = painterResource(iconRes),
+        //Icon (Back or Logout)
+        Image(painter = painterResource(iconRes),
             contentDescription = description,
             colorFilter = ColorFilter.tint(Color.White),
             modifier = Modifier
@@ -62,8 +62,7 @@ fun TopBar(initial: Char, navController: NavController) {
                         viewModel.logout()
                         navController.navigate("main")
                     }
-                }
-        )
+                })
 
 
         Spacer(modifier = Modifier.weight(1f))
@@ -79,21 +78,35 @@ fun TopBar(initial: Char, navController: NavController) {
 
         Spacer(modifier = Modifier.weight(1f))
 
-        //Profile picture
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(Color.Gray)
-                .align(Alignment.CenterVertically)
-        ) {
+        if (currentDestination == "profile") {
+            //Edit button
             Text(
-                text = initial.toString().uppercase(),
+                text = "edit",
                 color = Color.White,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 15.sp,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .clickable {
+
+                    }
             )
+        } else {
+            //Profile picture
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color.Gray)
+                    .align(Alignment.CenterVertically)
+            ) {
+                Text(
+                    text = initial.toString().uppercase(),
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 }
