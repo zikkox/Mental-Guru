@@ -58,9 +58,11 @@ fun TopBar(initial: Char, navController: NavController) {
                 .size(25.dp)
                 .align(Alignment.CenterVertically)
                 .clickable {
-                    if (currentDestination != "home") {
-                        viewModel.logout()
+                    if (currentDestination == "profile") {
                         navController.navigate("main")
+                    }else{
+                        viewModel.logout()
+                        navController.navigate("welcome")
                     }
                 })
 

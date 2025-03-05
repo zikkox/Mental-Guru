@@ -56,16 +56,8 @@ val navigationItems = listOf(
 fun BottomNavigation(navController: NavController) {
     val currentDestination by navController.currentBackStackEntryFlow.collectAsState(initial = navController.currentBackStackEntry)
 
-    val selectedNavigationIndex = rememberSaveable {
-        mutableIntStateOf(0)
-    }
-
-    LaunchedEffect(currentDestination?.destination?.route) {
-        val currentRoute = currentDestination?.destination?.route
-        val newIndex = navigationItems.indexOfFirst { it.route == currentRoute }
-        if (newIndex != -1) {
-            selectedNavigationIndex.intValue = newIndex
-        }
+    val currentRoute by remember {
+        derivedStateOf { currentDestination?.destination?.route }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -75,16 +67,17 @@ fun BottomNavigation(navController: NavController) {
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
         ) {
-            navigationItems.forEachIndexed { index, item ->
-                val isSelected = selectedNavigationIndex.intValue == index
+            navigationItems.forEach { item ->
+                val isSelected = currentRoute == item.route
 
                 NavigationBarItem(
                     selected = isSelected,
                     onClick = {
                         if (!isSelected) {
-                            selectedNavigationIndex.intValue = index
                             navController.navigate(item.route) {
-                                popUpTo(navController.graph.startDestinationId) { saveState = true }
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
                                 launchSingleTop = true
                                 restoreState = true
                             }
@@ -112,6 +105,7 @@ fun BottomNavigation(navController: NavController) {
         }
     }
 }
+
 
 
 @Preview

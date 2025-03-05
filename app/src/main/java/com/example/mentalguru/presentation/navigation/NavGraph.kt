@@ -12,11 +12,13 @@ import com.example.mentalguru.presentation.screens.SignUpScreen
 import com.example.mentalguru.presentation.screens.MusicScreen
 import com.example.mentalguru.presentation.screens.TimerScreen
 import com.example.mentalguru.presentation.screens.WelcomeScreen
+import com.example.mentalguru.presentation.viewmodels.TimerViewModel
 
 @Composable
 fun NavGraph() {
 
     val navController = rememberNavController()
+    val timerViewModel = TimerViewModel()
     val startScreen = "splash"
 
     NavHost(navController = navController, startDestination = startScreen) {
@@ -27,6 +29,6 @@ fun NavGraph() {
         composable("main") { MainScreen(navController) }
         composable("music") { MusicScreen(navController) }
         composable("profile") { ProfileScreen(navController) }
-        composable("timer") { TimerScreen(navController) }
+        composable("timer") { TimerScreen(navController, timerViewModel) }
     }
 }
