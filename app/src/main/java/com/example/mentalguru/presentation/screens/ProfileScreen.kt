@@ -12,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,20 +31,23 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mentalguru.R
 import com.example.mentalguru.presentation.ui.components.BottomNavigation
+import com.example.mentalguru.presentation.ui.components.EditProfileDialog
 import com.example.mentalguru.presentation.ui.components.TopBar
 import com.example.mentalguru.presentation.viewmodels.AuthViewModel
+import com.example.mentalguru.presentation.viewmodels.ProfileViewModel
 
 @Composable
 fun ProfileScreen(navController: NavController) {
 
 
-    val viewModel: AuthViewModel = viewModel()
-    val currentUser = viewModel.currentUser
+    val authViewModel: AuthViewModel = viewModel()
+    val currentUser = authViewModel.currentUser
     val initial = currentUser?.email?.get(0) ?: 'p'
 
-//    val userName by viewModel.userName.collectAsState()
-//    val userLocation by viewModel.userLocation.collectAsState()
-//    val userDob by viewModel.userDob.collectAsState()
+    val profileViewModel: ProfileViewModel = viewModel()
+    val userLocation by profileViewModel.userLocation.collectAsState()
+    val userDob by profileViewModel.userDob.collectAsState()
+    val isEditDialogVisible by profileViewModel.isEditDialogVisible.collectAsState()
 
     Box(
         modifier = Modifier
@@ -94,7 +98,7 @@ fun ProfileScreen(navController: NavController) {
 
             //Location
             Text(
-                text = AnnotatedString("India"),
+                text = AnnotatedString(userLocation),
                 style = androidx.compose.ui.text.TextStyle(
                     color = Color.LightGray,
                     fontSize = 20.sp,
@@ -107,7 +111,7 @@ fun ProfileScreen(navController: NavController) {
 
             //DoB
             Text(
-                text = AnnotatedString("1992"),
+                text = AnnotatedString(userDob),
                 style = androidx.compose.ui.text.TextStyle(
                     color = Color.LightGray,
                     fontSize = 20.sp,
@@ -139,6 +143,12 @@ fun ProfileScreen(navController: NavController) {
                 contentScale = ContentScale.Crop
             )
 
+        }
+
+        if (isEditDialogVisible) {
+            EditProfileDialog(
+                profileViewModel = profileViewModel
+            )
         }
     }
 

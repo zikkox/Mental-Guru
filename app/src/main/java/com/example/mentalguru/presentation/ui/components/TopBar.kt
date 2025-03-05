@@ -30,11 +30,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.mentalguru.R
 import com.example.mentalguru.presentation.viewmodels.AuthViewModel
+import com.example.mentalguru.presentation.viewmodels.ProfileViewModel
 
 @Composable
 fun TopBar(initial: Char, navController: NavController) {
 
-    val viewModel: AuthViewModel = viewModel()
+    val authViewModel: AuthViewModel = viewModel()
+    val profileViewModel = viewModel<ProfileViewModel>()
 
     // Get current destination
     val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
@@ -58,10 +60,10 @@ fun TopBar(initial: Char, navController: NavController) {
                 .size(25.dp)
                 .align(Alignment.CenterVertically)
                 .clickable {
-                    if (currentDestination == "profile") {
+                    if (currentDestination == "timer") {
                         navController.navigate("main")
                     }else{
-                        viewModel.logout()
+                        authViewModel.logout()
                         navController.navigate("welcome")
                     }
                 })
@@ -89,7 +91,7 @@ fun TopBar(initial: Char, navController: NavController) {
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .clickable {
-
+                        profileViewModel.showEditDialog()
                     }
             )
         } else {

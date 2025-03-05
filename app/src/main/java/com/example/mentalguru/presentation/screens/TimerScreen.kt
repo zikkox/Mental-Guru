@@ -18,23 +18,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.mentalguru.R
 import com.example.mentalguru.presentation.ui.components.BottomNavigation
 import com.example.mentalguru.presentation.ui.components.TopBar
+import com.example.mentalguru.presentation.viewmodels.AuthViewModel
 import com.example.mentalguru.presentation.viewmodels.TimerViewModel
 
 @Composable
-fun TimerScreen(navController: NavController, viewModel: TimerViewModel) {
-    val timeLeft by viewModel.timeLeft.observeAsState(45 * 60 * 1000L)
-    val timerRunning by viewModel.timerRunning.observeAsState(false)
-    val timerFinished by viewModel.timerFinished.observeAsState(false)
+fun TimerScreen(navController: NavController, timerViewModel: TimerViewModel) {
+
+    val timeLeft by timerViewModel.timeLeft.observeAsState(45 * 60 * 1000L)
+    val timerRunning by timerViewModel.timerRunning.observeAsState(false)
+    val timerFinished by timerViewModel.timerFinished.observeAsState(false)
 
     TimerScreenContent(
         timeLeft = timeLeft,
         timerRunning = timerRunning,
         timerFinished = timerFinished,
-        onToggleTimer = { viewModel.toggleTimer() },
+        onToggleTimer = { timerViewModel.toggleTimer() },
         navController = navController
     )
 }
@@ -47,13 +50,18 @@ fun TimerScreenContent(
     onToggleTimer: () -> Unit,
     navController: NavController
 ) {
+
+    val authViewModel: AuthViewModel = viewModel()
+    val currentUser = authViewModel.currentUser
+    val initial = currentUser?.email?.get(0) ?: 'p'
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(colorResource(id = R.color.dark_green))
             .padding(16.dp)
     ) {
-        TopBar('p', navController)
+        TopBar(initial, navController)
 
         Column(
             modifier = Modifier.fillMaxSize().align(Alignment.Center)
