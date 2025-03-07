@@ -249,7 +249,6 @@ fun MeditationCard(item: MeditationItem, navController: NavController) {
                             modifier = Modifier
                                 .size(13.dp)
                         )
-
                     }
                 }
             }

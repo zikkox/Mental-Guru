@@ -53,7 +53,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage = _errorMessage.asSharedFlow()
 
-    val currentUser = firebaseAuth.currentUser
+    var currentUser = firebaseAuth.currentUser
 
 
     init {

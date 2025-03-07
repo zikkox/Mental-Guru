@@ -1,13 +1,9 @@
 package com.example.mentalguru.presentation.screens
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,12 +19,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.mentalguru.R
 import com.example.mentalguru.presentation.ui.components.BottomNavigation
 import com.example.mentalguru.presentation.ui.components.EditProfileDialog
@@ -48,6 +42,10 @@ fun ProfileScreen(navController: NavController) {
     val userLocation by profileViewModel.userLocation.collectAsState()
     val userDob by profileViewModel.userDob.collectAsState()
     val isEditDialogVisible by profileViewModel.isEditDialogVisible.collectAsState()
+
+    LaunchedEffect(currentUser?.email) {
+        profileViewModel.loadUserData()
+    }
 
     Box(
         modifier = Modifier

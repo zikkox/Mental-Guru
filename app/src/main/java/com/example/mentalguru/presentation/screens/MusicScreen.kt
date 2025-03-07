@@ -7,15 +7,16 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -47,54 +48,82 @@ fun MusicScreen(navController: NavController) {
             .background(colorResource(id = R.color.dark_green))
             .padding(16.dp)
     ) {
-
         TopBar(initial, navController)
 
         Column(
             modifier = Modifier
-                .padding(30.dp)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Top
+                .fillMaxSize()
+                .padding(top = 150.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            //Header
-            Text(
-                text = AnnotatedString("Relax Sounds"),
-                style = TextStyle(
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 32.sp
-                )
-            )
 
-            Spacer(modifier = Modifier.height(10.dp))
-
-            //Subtitle
-            Text(
-                text = AnnotatedString("Sometimes the most productive thing you can do is relax."),
-                style = TextStyle(
-                    color = Color.White,
-                    fontSize = 16.sp
-                )
-            )
-
-            Spacer(modifier = Modifier.height(30.dp))
-
-            //Play Now Button
-            Button(
-                onClick = { },
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                    .height(200.dp)
             ) {
-                Text(
-                    text = "Play Now",
-                    color = Color.Black
+
+                Image(
+                    painter = painterResource(id = R.drawable.bg_music),
+                    contentDescription = "Background",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                        .clip(shape = RoundedCornerShape(20.dp))
                 )
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 37.dp, vertical = 32.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
+
+                    //Header
+                    Text(
+                        text = "Relax Sounds",
+                        color = Color.White,
+                        fontSize = 27.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(5.dp))
+
+                    //Description
+                    Text(
+                        text = "Sometimes the most productive thing you can do is relax.",
+                        color = Color.White,
+                        fontSize = 15.sp,
+                        textAlign = TextAlign.Start
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    //Play now button
+                    Button(
+                        onClick = { },
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                    ) {
+                        Text(
+                            text = "play now",
+                            color = Color.Black
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Icon(
+                            painter = painterResource(R.drawable.ic_watch),
+                            contentDescription = "Play",
+                            tint = Color.Black,
+                            modifier = Modifier
+                                .size(13.dp)
+                        )
+                    }
+                }
             }
 
+            Spacer(modifier = Modifier.height(20.dp))
 
-            //Music List
+            //Music list
             musicList?.forEach { music ->
                 MusicListItem(music, navController)
             }
@@ -105,6 +134,7 @@ fun MusicScreen(navController: NavController) {
     }
     BottomNavigation(navController)
 }
+
 
 // API Call to get Music List
 //    LaunchedEffect(Unit) {
