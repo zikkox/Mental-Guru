@@ -62,9 +62,17 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
 
+    //navigation
     implementation("androidx.navigation:navigation-compose:2.7.5")
+
+    //vm
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
 
     //coil
     implementation("io.coil-kt.coil3:coil-compose:3.1.0")
+
+    //retrofit
+    implementation ("com.squareup.retrofit2:retrofit:2.10.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.10.0")
 }

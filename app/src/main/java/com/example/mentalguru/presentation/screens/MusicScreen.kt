@@ -4,9 +4,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,25 +26,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil3.compose.AsyncImage
 import com.example.mentalguru.R
 import com.example.mentalguru.data.model.Music
 import com.example.mentalguru.presentation.ui.components.BottomNavigation
 import com.example.mentalguru.presentation.ui.components.LoadingComponent
 import com.example.mentalguru.presentation.ui.components.TopBar
 import com.example.mentalguru.presentation.viewmodels.AuthViewModel
+import com.example.mentalguru.presentation.viewmodels.MusicViewModel
 
 @Composable
 fun MusicScreen(navController: NavController) {
-
     val viewModel: AuthViewModel = viewModel()
     val currentUser = viewModel.currentUser
     val initial = currentUser?.email?.get(0) ?: 'p'
 
-    val musicList = listOf(
-        Music(1, "Music 1", "Artist 1", 3, "https://example.com/music1.mp3"),
-        Music(2, "Music 2", "Artist 2", 4, "https://example.com/music2.mp3")
+    val musicViewModel: MusicViewModel = viewModel()
+    val musicList by musicViewModel.musicList.collectAsState()
 
-    )
+    LaunchedEffect(Unit) {
+        musicViewModel.loadMusic()
+    }
 
 
     Box(
@@ -56,18 +63,17 @@ fun MusicScreen(navController: NavController) {
                 .padding(top = 150.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
             ) {
-
                 Image(
                     painter = painterResource(id = R.drawable.bg_music),
                     contentDescription = "Background",
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                         .clip(shape = RoundedCornerShape(20.dp))
                 )
 
@@ -77,8 +83,6 @@ fun MusicScreen(navController: NavController) {
                         .padding(horizontal = 37.dp, vertical = 32.dp),
                     verticalArrangement = Arrangement.Center
                 ) {
-
-                    //Header
                     Text(
                         text = "Relax Sounds",
                         color = Color.White,
@@ -87,7 +91,6 @@ fun MusicScreen(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(5.dp))
 
-                    //Description
                     Text(
                         text = "Sometimes the most productive thing you can do is relax.",
                         color = Color.White,
@@ -97,7 +100,6 @@ fun MusicScreen(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    //Play now button
                     Button(
                         onClick = { },
                         shape = RoundedCornerShape(10.dp),
@@ -114,32 +116,29 @@ fun MusicScreen(navController: NavController) {
                             painter = painterResource(R.drawable.ic_watch),
                             contentDescription = "Play",
                             tint = Color.Black,
-                            modifier = Modifier
-                                .size(13.dp)
+                            modifier = Modifier.size(13.dp)
                         )
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(40.dp))
 
-            //Music list
-            musicList?.forEach { music ->
-                MusicListItem(music, navController)
+            //LazyColumn for music list
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+                    .padding(horizontal = 30.dp)
+            ) {
+                items(musicList) { music ->
+                    MusicListItem(music, navController)
+                }
             }
         }
 
-        //Show loading indicator
         LoadingComponent(false)
     }
     BottomNavigation(navController)
 }
-
-
-// API Call to get Music List
-//    LaunchedEffect(Unit) {
-//        viewModel.getMusicList()
-//    }}
 
 
 @Composable
@@ -153,10 +152,10 @@ fun MusicListItem(music: Music, navController: NavController) {
             },
         horizontalArrangement = Arrangement.Start
     ) {
-        //Music Image
-        Image(
-            painter = painterResource(id = R.drawable.bg_timer),
-            contentDescription = "Music Image",
+        //Music image
+        AsyncImage(
+            model = music.cover,
+            contentDescription = "Cover Image",
             modifier = Modifier
                 .size(60.dp)
                 .clip(RoundedCornerShape(8.dp)),
@@ -165,7 +164,7 @@ fun MusicListItem(music: Music, navController: NavController) {
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        //Music Title & Artist
+        //Music title and artist
         Column {
             Text(
                 text = music.title,
@@ -186,7 +185,7 @@ fun MusicListItem(music: Music, navController: NavController) {
 
         Spacer(modifier = Modifier.weight(1f))
 
-        //Time Indicator (Listening Duration)
+        //Time indicator (listening duration)
         Text(
             text = "${music.duration} Min",
             style = TextStyle(
