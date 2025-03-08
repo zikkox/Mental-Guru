@@ -10,6 +10,7 @@ import com.example.mentalguru.presentation.screens.MainScreen
 import com.example.mentalguru.presentation.screens.ProfileScreen
 import com.example.mentalguru.presentation.screens.SignUpScreen
 import com.example.mentalguru.presentation.screens.MusicScreen
+import com.example.mentalguru.presentation.screens.SoundScreen
 import com.example.mentalguru.presentation.screens.TimerScreen
 import com.example.mentalguru.presentation.screens.WelcomeScreen
 import com.example.mentalguru.presentation.viewmodels.TimerViewModel
@@ -30,5 +31,11 @@ fun NavGraph() {
         composable("music") { MusicScreen(navController) }
         composable("profile") { ProfileScreen(navController) }
         composable("timer") { TimerScreen(navController, timerViewModel) }
+        composable("sound/{musicId}") { backStackEntry ->
+            val musicId = backStackEntry.arguments?.getString("musicId")
+            if (musicId != null) {
+                SoundScreen(musicId, navController)
+            }
+        }
     }
 }

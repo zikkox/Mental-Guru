@@ -21,13 +21,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.example.mentalguru.R
 import com.example.mentalguru.presentation.viewmodels.AuthViewModel
 import com.example.mentalguru.presentation.viewmodels.ProfileViewModel
@@ -49,7 +47,8 @@ fun TopBar(initial: Char, navController: NavController) {
     ) {
         //Determine the icon based on the current screen
         val iconRes =
-            if (currentDestination == "timer") R.drawable.ic_back_arrow else R.drawable.ic_logout
+            if (currentDestination == "timer" || currentDestination == "sound/{musicId}") R.drawable.ic_back_arrow
+            else R.drawable.ic_logout
         val description = if (currentDestination == "timer") "Back" else "Logout"
 
         //Icon (Back or Logout)
@@ -60,12 +59,16 @@ fun TopBar(initial: Char, navController: NavController) {
                 .size(25.dp)
                 .align(Alignment.CenterVertically)
                 .clickable {
-                    if (currentDestination == "timer") {
-                        navController.navigate("main")
-                    }else{
-                        authViewModel.logout()
-                        navController.navigate("welcome"){
-                            popUpTo(0) { inclusive = true }
+                    when (currentDestination) {
+                        "timer" -> navController.navigate("main")
+
+                        "sound/{musicId}" -> {
+                            navController.navigate("music")
+                        }
+
+                        else -> {
+                            authViewModel.logout()
+                            navController.navigate("welcome")
                         }
                     }
                 })
@@ -115,10 +118,4 @@ fun TopBar(initial: Char, navController: NavController) {
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun TopBarPreview() {
-    TopBar('p', navController = rememberNavController())
 }

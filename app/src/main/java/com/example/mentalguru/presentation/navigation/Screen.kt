@@ -9,4 +9,5 @@ sealed class Screen(val route: String) {
     data object Music : Screen("music")
     data object Profile : Screen("profile")
     data object Timer : Screen("timer")
+    data object Sound : Screen("sound")
 }

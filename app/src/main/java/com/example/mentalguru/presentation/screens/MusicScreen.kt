@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -47,7 +48,6 @@ fun MusicScreen(navController: NavController) {
     LaunchedEffect(Unit) {
         musicViewModel.loadMusic()
     }
-
 
     Box(
         modifier = Modifier
@@ -128,6 +128,9 @@ fun MusicScreen(navController: NavController) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
                     .padding(horizontal = 30.dp)
+                    .padding(bottom = 112.dp)
+                    .clip(RoundedCornerShape(20.dp)),
+                verticalArrangement = Arrangement.spacedBy(21.dp)
             ) {
                 items(musicList) { music ->
                     MusicListItem(music, navController)
@@ -148,13 +151,14 @@ fun MusicListItem(music: Music, navController: NavController) {
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable {
-                navController.navigate("musicPlayerScreen/${music.id}")
+                navController.navigate("sound/${music.id}")
             },
         horizontalArrangement = Arrangement.Start
     ) {
-        //Music image
+        //Cover image
         AsyncImage(
-            model = music.cover,
+            //model = music.cover,
+            model = R.drawable.ic_cover,
             contentDescription = "Cover Image",
             modifier = Modifier
                 .size(60.dp)
@@ -165,21 +169,21 @@ fun MusicListItem(music: Music, navController: NavController) {
         Spacer(modifier = Modifier.width(16.dp))
 
         //Music title and artist
-        Column {
+        Column(modifier = Modifier.width(170.dp)) {
             Text(
                 text = music.title,
-                style = TextStyle(
-                    color = Color.White,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth()
             )
             Text(
                 text = "By: ${music.artist}",
-                style = TextStyle(
-                    color = Color.Gray,
-                    fontSize = 14.sp
-                )
+                color = Color.Gray,
+                fontSize = 14.sp,
+                maxLines = 1
             )
         }
 
@@ -188,10 +192,9 @@ fun MusicListItem(music: Music, navController: NavController) {
         //Time indicator (listening duration)
         Text(
             text = "${music.duration} Min",
-            style = TextStyle(
-                color = Color.White,
-                fontSize = 14.sp
-            )
+            color = Color.White,
+            fontSize = 14.sp,
+            maxLines = 1
         )
     }
 }

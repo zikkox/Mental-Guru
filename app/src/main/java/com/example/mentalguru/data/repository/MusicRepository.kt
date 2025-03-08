@@ -6,6 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class MusicRepository {
+
     private val api: MusicApiService
 
     init {
@@ -22,6 +23,14 @@ class MusicRepository {
             api.getMusicList()
         } catch (e: Exception) {
             emptyList()
+        }
+    }
+
+    suspend fun fetchMusicById(id: String): Music? {
+        return try {
+            api.getMusicById(id)
+        } catch (e: Exception) {
+            null
         }
     }
 }

@@ -132,7 +132,7 @@ fun MainScreen(navController: NavController) {
             //Meditation cards
             LazyColumn(
                 modifier = Modifier
-                    .height(425.dp)
+                    .padding(bottom = 112.dp)
                     .clip(RoundedCornerShape(20.dp)),
                 verticalArrangement = Arrangement.spacedBy(26.dp)
             ) {
