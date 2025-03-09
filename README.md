@@ -30,12 +30,20 @@ Let the music heal your mind. 🌙💆‍♀️
 - Coil for fast and efficient image loading.
 
 
+---
+
 🚀 Tech Stack
 
 Kotlin - Core development language
+
 Jetpack Compose - Modern UI toolkit for Android
+
 Compose Navigation - Declarative app navigation
+
 Firebase Auth -	Secure user authentication
+
 Firestore - Cloud-based storage for user data
+
 Coil - Fast and efficient image loading
+
 Custom API - Meditation music and data
