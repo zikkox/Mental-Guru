@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 
 class TimerViewModel : ViewModel() {
 
-    private val initialTime = 1 * 60 * 1000L
+    private val initialTime = 10 * 60 * 1000L
 
     private val _timeLeft = MutableLiveData(initialTime)
     val timeLeft: LiveData<Long> = _timeLeft
