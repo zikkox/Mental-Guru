@@ -17,6 +17,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +34,7 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.example.mentalguru.R
 import com.example.mentalguru.presentation.ui.components.BottomNavigation
+import com.example.mentalguru.presentation.ui.components.LoadingComponent
 import com.example.mentalguru.presentation.ui.components.TopBar
 import com.example.mentalguru.presentation.viewmodels.AuthViewModel
 import com.example.mentalguru.presentation.viewmodels.MusicViewModel
@@ -45,6 +48,7 @@ fun SoundScreen(musicId: String, navController: NavController) {
 
     val musicViewModel: MusicViewModel = viewModel()
     val music = musicViewModel.music
+    val isLoading by musicViewModel.isLoading.collectAsState()
 
     LaunchedEffect(musicId) {
         musicViewModel.getMusicById(musicId)
@@ -94,6 +98,7 @@ fun SoundScreen(musicId: String, navController: NavController) {
         MusicControls()
 
     }
+    LoadingComponent(isLoading)
 
     BottomNavigation(navController)
 }

@@ -19,15 +19,23 @@ class MusicViewModel : ViewModel() {
     private val _music = mutableStateOf<Music?>(null)
     val music: State<Music?> = _music
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     fun loadMusic() {
         viewModelScope.launch {
+            _isLoading.value = true
             _musicList.value = repository.fetchMusicList()
+            _isLoading.value = false
         }
     }
 
     fun getMusicById(id: String) {
         viewModelScope.launch {
+            _isLoading.value = true
             _music.value = repository.fetchMusicById(id)
+            _isLoading.value = false
         }
     }
 }
+

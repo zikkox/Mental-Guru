@@ -44,6 +44,7 @@ fun MusicScreen(navController: NavController) {
 
     val musicViewModel: MusicViewModel = viewModel()
     val musicList by musicViewModel.musicList.collectAsState()
+    val isLoading by musicViewModel.isLoading.collectAsState()
 
     LaunchedEffect(Unit) {
         musicViewModel.loadMusic()
@@ -138,7 +139,7 @@ fun MusicScreen(navController: NavController) {
             }
         }
 
-        LoadingComponent(false)
+        LoadingComponent(isLoading)
     }
     BottomNavigation(navController)
 }
