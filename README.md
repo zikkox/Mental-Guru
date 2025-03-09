@@ -31,6 +31,7 @@ Let the music heal your mind. 🌙💆‍♀️
 
 
 🚀 Tech Stack
+
 Kotlin - Core development language
 Jetpack Compose - Modern UI toolkit for Android
 Compose Navigation - Declarative app navigation
