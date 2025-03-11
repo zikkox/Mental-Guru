@@ -68,7 +68,9 @@ fun TopBar(initial: Char, navController: NavController) {
 
                         else -> {
                             authViewModel.logout()
-                            navController.navigate("welcome")
+                            navController.navigate("welcome"){
+                                popUpTo(0)
+                            }
                         }
                     }
                 })
