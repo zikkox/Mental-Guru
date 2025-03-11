@@ -1,5 +1,6 @@
 package com.example.mentalguru.data.repository
 
+import android.util.Log
 import com.example.mentalguru.data.remote.MusicApiService
 import com.example.mentalguru.data.model.Music
 import retrofit2.Retrofit
@@ -22,6 +23,7 @@ class MusicRepository {
         return try {
             api.getMusicList()
         } catch (e: Exception) {
+            Log.e("MusicRepository", "Error fetching music list", e)
             emptyList()
         }
     }
@@ -30,6 +32,7 @@ class MusicRepository {
         return try {
             api.getMusicById(id)
         } catch (e: Exception) {
+            Log.e("MusicRepository", "Error fetching music by ID", e)
             null
         }
     }

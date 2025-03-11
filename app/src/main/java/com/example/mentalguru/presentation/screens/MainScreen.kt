@@ -26,6 +26,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,22 +50,28 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mentalguru.presentation.navigation.Screen
 import com.example.mentalguru.presentation.ui.components.BottomNavigation
+import com.example.mentalguru.presentation.ui.components.LoadingComponent
+import com.example.mentalguru.presentation.ui.components.QuoteDialog
 import com.example.mentalguru.presentation.ui.components.TopBar
 import com.example.mentalguru.presentation.viewmodels.AuthViewModel
+import com.example.mentalguru.presentation.viewmodels.QuoteViewModel
 
 @Composable
 fun MainScreen(navController: NavController) {
 
-    val viewModel: AuthViewModel = viewModel()
-    val currentUser = viewModel.currentUser
+    val authViewModel: AuthViewModel = viewModel()
+    val currentUser = authViewModel.currentUser
     val name = currentUser?.email?.substringBefore("@") ?: "Guest"
     val initial = currentUser?.email?.get(0) ?: 'p'
 
+    val quoteViewModel: QuoteViewModel = viewModel()
+    val isLoading by quoteViewModel.isLoading.collectAsState()
+
     val moodList = listOf(
-        Mood("Calm", R.drawable.ic_calm),
-        Mood("Relax", R.drawable.ic_relax),
-        Mood("Focus", R.drawable.ic_focus),
-        Mood("Anxious", R.drawable.ic_anxious)
+        Mood("Calm", R.drawable.ic_calm, "life"),
+        Mood("Relax", R.drawable.ic_relax, "wisdom"),
+        Mood("Focus", R.drawable.ic_focus, "motivational"),
+        Mood("Anxious", R.drawable.ic_anxious, "inspirational")
     )
 
     val meditationList = listOf(
@@ -123,7 +135,7 @@ fun MainScreen(navController: NavController) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 moodList.forEach { mood ->
-                    MoodButton(mood)
+                    MoodButton(mood, quoteViewModel)
                 }
             }
 
@@ -142,15 +154,23 @@ fun MainScreen(navController: NavController) {
             }
 
         }
+
+        LoadingComponent(isLoading)
     }
 
     BottomNavigation(navController)
 }
 
+
 @Composable
-fun MoodButton(mood: Mood) {
+fun MoodButton(mood: Mood, viewModel: QuoteViewModel) {
+
+    var showDialog by remember { mutableStateOf(false) }
+    val quote by viewModel.quote.observeAsState()
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Image(painter = painterResource(mood.icon),
+        Image(
+            painter = painterResource(mood.icon),
             colorFilter = ColorFilter.tint(colorResource(id = R.color.dark_green)),
             contentDescription = mood.name,
             modifier = Modifier
@@ -158,12 +178,29 @@ fun MoodButton(mood: Mood) {
                 .clip(RoundedCornerShape(50f))
                 .background(colorResource(id = R.color.opaque_white))
                 .padding(12.dp)
-                .clickable { /* TODO: Handle mood click */ })
+                .clickable {
+                    showDialog = true
+                    viewModel.fetchRandomQuoteByTag(listOf(mood.quoteTag))
+                }
+        )
+
+        Spacer(modifier = Modifier.height(3.dp))
+
         Text(
             text = mood.name, color = Color.White, fontSize = 12.sp
         )
     }
+
+
+    if (showDialog) {
+        QuoteDialog(
+            quote,
+            onDismiss = { showDialog = false }
+        )
+    }
 }
+
+
 
 @Composable
 fun MeditationCard(item: MeditationItem, navController: NavController) {
@@ -198,8 +235,6 @@ fun MeditationCard(item: MeditationItem, navController: NavController) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
-
                 Column {
                     Text(
                         text = item.title,
@@ -257,7 +292,12 @@ fun MeditationCard(item: MeditationItem, navController: NavController) {
 }
 
 
-data class Mood(val name: String, val icon: Int)
+data class Mood(
+    val name: String,
+    val icon: Int,
+    val quoteTag: String
+)
+
 data class MeditationItem(
     val title: String,
     val description: String,
